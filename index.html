@@ -7,58 +7,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      /* The background will be set dynamically by JS so this is a fallback */
-      --main-bg: linear-gradient(145deg, #ffe0f0, #d0f0ff);
-      --card-bg: rgba(255, 255, 255, 0.3);
-      --text-color: #333;
-      --heart-color: #cc3366;
-    }
+     :root {
+    /* JS will over-write this each page-load      */
+    --main-bg: linear-gradient(145deg,#ffe0f0,#d0f0ff);
+    --card-bg: rgba(255,255,255,.3);
+    --text-color:#333;
+    --heart-color:#cc3366;
+  }
+  body.dark{
+    --main-bg:linear-gradient(145deg,#0f2027,#203a43,#2c5364);
+    --card-bg:rgba(0,0,0,.4);
+    --text-color:#f1f1f1;
+    --heart-color:#ff99aa;
+  }
 
-    body.dark {
-      --main-bg: linear-gradient(145deg, #0f2027, #203a43, #2c5364);
-      --card-bg: rgba(0, 0, 0, 0.4);
-      --text-color: #f1f1f1;
-      --heart-color: #ff99aa;
-    }
+  /* 🔒 2️⃣  nuke every inherited background-image (catches any cache) */
+  body,
+  body::before{background-image:none!important;}
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Quicksand', sans-serif;
-      background: var(--main-bg);
-      color: var(--text-color);
-      overflow-x: hidden;
-      transition: background 0.5s ease, color 0.5s ease;
-    }
+  body{
+    margin:0;padding:0;
+    font-family:'Quicksand',sans-serif;
+    background:var(--main-bg);           /* random gradient from JS */
+    color:var(--text-color);
+    overflow-x:hidden;
+    transition:background .5s ease,color .5s ease;
+  }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: url('https://i.imgur.com/l4UjJZT.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.1;
-      z-index: -1;
-    }
+  /* 3️⃣  optional sparkle overlay — pure CSS, no watermark */
+  body::before{
+    content:'';
+    position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(circle at 30% 30%,rgba(255,255,255,.15),transparent 60%),
+      radial-gradient(circle at 70% 70%,rgba(255,255,255,.1) ,transparent 60%);
+    animation:sparkleMove 12s linear infinite;
+  }
+  @keyframes sparkleMove{
+    0%{background-position:0 0,0 0}
+    100%{background-position:200% 200%,200% 200%}
+  }
 
-    .theme-toggle {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      padding: 10px 15px;
-      background: #ff85b3;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      cursor: pointer;
-      z-index: 10;
-    }
+
+    .theme-toggle, .bg-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 10px 15px;
+  background: #ff85b3;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 10;
+}
+.bg-toggle {
+  top: 50px;
+  background: #fda7df;
+  font-size: 0.9em;
+}
 
     .music-banner {
       display: none;
@@ -389,6 +396,7 @@
 
 <body>
   <button class="theme-toggle" onclick="document.body.classList.toggle('dark')">🌓 Toggle Theme</button>
+  <button class="bg-toggle" onclick="changeBgColor()">🎨 Change Background</button>
 
   <!-- Music paused banner -->
   <div class="music-banner" id="musicBanner">Music Paused</div>
@@ -560,6 +568,14 @@
         audio.pause();
       }
     }
+    function changeBgColor() {
+  const userColor = prompt("Enter a background color (e.g., 'pink', '#ffc0cb', or a gradient):", "pink");
+  if (userColor) {
+    document.documentElement.style.setProperty('--main-bg', userColor);
+    document.body.style.background = userColor;
+  }
+}
+
   </script>
 </body>
 
